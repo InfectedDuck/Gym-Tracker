@@ -1,0 +1,1 @@
+export default function NotFound(){return<main className="auth-page"><section className="auth-card"><span className="eyebrow">404</span><h1>Off the beaten track.</h1><p>This page isn’t available.</p><a className="button primary" href="/">Back to today</a></section></main>}

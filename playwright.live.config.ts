@@ -1,0 +1,1 @@
+import{defineConfig,devices}from"@playwright/test";export default defineConfig({testDir:"./tests/live",testMatch:"*.spec.ts",workers:1,timeout:60000,use:{baseURL:process.env.E2E_BASE_URL??"http://127.0.0.1:3000",trace:"off",screenshot:"only-on-failure",...devices["Desktop Chrome"],channel:process.env.PLAYWRIGHT_CHANNEL??"chrome"}});

@@ -1,0 +1,1 @@
+import{AuthForm}from"@/components/auth-form";import{configured}from"@/lib/supabase/server";import{redirect}from"next/navigation";export const dynamic="force-dynamic";export default function Page(){if(!configured())redirect("/setup");return<AuthForm/>}

@@ -1,0 +1,1 @@
+import{Progress}from"@/components/history";export default function Page(){return<Progress/>}

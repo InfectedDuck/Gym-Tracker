@@ -1,0 +1,1 @@
+alter table public.profiles add column if not exists entry_mode text not null default 'guided' check(entry_mode in('guided','quick'));
