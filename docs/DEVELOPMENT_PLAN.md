@@ -19,6 +19,8 @@ Mobile-first responsive; Blackplate design system (near-black neutrals, one embe
 - [x] Pass the final Next.js production build after the verification fixes.
 - [x] Add overload targets, personal-best detection, the weekly muscle summary, install metadata and reconnect retry with unit and browser coverage (2026-09-08).
 - [x] Add routine share links and import with unit and browser coverage (2026-09-08).
+- [x] Reconcile the interface against the published Blackplate design canvas, add routine set and rep schemes with rep ranges, and replace typed quick entry with a tap-driven builder (2026-09-08).
+- [x] Place the project under version control with an LF normalisation policy and an .env.example template (2026-09-08).
 - [ ] Configure development Supabase and verify real account confirmation, recovery, and live API integration.
 - [ ] Configure production Supabase, email delivery, and hosting.
 - [ ] Prepare and verify a Cloudflare-compatible build adapter if using Sites hosting, then deploy the application privately.
@@ -53,13 +55,16 @@ The owner asked what would make Forge succeed beyond a personal tool. A general 
 - [x] Installable app: web manifest, theme colour, favicon, Apple home-screen metadata. The proxy skips the manifest route.
 - [x] Connectivity: an offline status line on Today, and a failed save retries automatically when the connection returns. Drafts stay in memory only, per the no-browser-storage rule.
 - [x] Visual redesign implemented from the Blackplate direction in docs/DESIGN_BRIEF.md (2026-09-08): tokenised palette with a light variant, self-hosted Barlow Condensed and Inter, 64px desktop icon rail replacing the sidebar and top bar, single content column, weekly numbers as one line instead of stat cards, week strip promoted into the session header as the date control, ember progress rule under the session title, redesigned set row with a tap-to-cycle set type and unit-aware weight and repetition steppers, full-height log control, docked rest timer that no longer covers the log column, and noun page titles with the slogan copy removed.
-- [ ] Reconcile against the published design canvas; the implementation was built from the written Blackplate specification, not from the published .dc.html file.
+- [x] Reconciled against the Blackplate design canvas (2026-09-08). The canvas was read by unpacking the exported bundle rather than through design-system authorization. Applied from it: hairline rather than edge borders on plate cells, 52px set rows with 22px index numerals, the record mark moved off the log button onto the value, grey warm-ups in place of yellow, ink-on-ground selection across segmented controls, chips, day cells and session tabs, the full-measure ember rule, shadow removal on dialogs, toasts and the rest timer, the canvas button and input states, and the struck-bar engraved brand mark. Deliberately kept over the canvas: the Daylight light variant, the 1180/760/480 breakpoints, visible focus rings, reduced-motion support, and borderless toolbar icon buttons.
 - [ ] Weekly summary email or Monday recap card (sets per muscle, volume trend, PRs).
+- [ ] Apply 202609080005_rep_ranges.sql to the development and production Supabase projects; the harness runs it but no hosted project has it yet.
+- [ ] Cover the quick entry builder with unit and browser tests. It is now the default alternative to guided logging and has neither; tests/quick.test.ts only covers the secondary text parser.
+- [ ] Surface routine rep ranges as targets during guided logging. Instantiating a routine currently seeds only the bottom of the range, so an 8-12 routine shows 8 with no sign of the ceiling.
 
 ### Phase 2 — acquisition without a community
 - [x] Routine sharing: every routine has a share link (/routines?import=code) that opens the editor prefilled in any account; standard exercises map by id, custom ones by name, and unmatched names are reported (lib/share.ts).
 - [ ] Preserve the import link through login and sign-up (a next parameter on /login) so a new user lands on the shared routine.
-- [ ] Program library seeded by the owner (5/3/1, PPL, GZCLP, Starting Strength) with one-tap import.
+- [ ] Program library seeded by the owner (5/3/1, PPL, GZCLP, Starting Strength) with one-tap import. lib/schemes.ts and rep ranges now provide the set and rep vocabulary these programs need, so this is largely seed data carried by the existing share encoder.
 - [ ] Share cards: an image of a finished session or a new PR for social stories.
 - [ ] CSV import from Strong and Hevy to remove switching cost.
 
@@ -73,10 +78,10 @@ The owner asked what would make Forge succeed beyond a personal tool. A general 
 - Push notifications for rest timers: valuable but needs the PWA install first.
 
 ## Remaining external prerequisites
-No .env.local or Supabase variables were supplied during implementation. Set up the development and production projects following SETUP.md. Real account email delivery, live application route isolation, and a deployed URL are not yet verified.
+.env.example records the three required variables; real values are supplied locally in .env or .env.local and are never committed. Set up the development and production projects following SETUP.md. Real account email delivery, live application route isolation, and a deployed URL are not yet verified.
 
 ## Implementation discipline
-Consult ARCHITECTURE.md before changing a subsystem. Update these documents as behavior changes. Mark external milestones only when verified. Keep source compact and comment-free; Markdown remains readable.
+The project is a git repository; .gitattributes normalises line endings to LF so the single-line source rule survives Windows checkouts, and .gitignore keeps every .env variant except .env.example out of history. Consult ARCHITECTURE.md before changing a subsystem. Update these documents as behavior changes. Mark external milestones only when verified. Keep source compact and comment-free; Markdown remains readable.
 
 ## Out of scope
 Social features, cardio, body-weight measurements, goals, photos, and offline synchronization.
