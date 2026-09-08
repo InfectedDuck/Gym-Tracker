@@ -81,6 +81,7 @@ The owner asked what would make Forge succeed beyond a personal tool. A general 
 - [x] Plate-loading logic (2026-09-08): lib/plates.ts computes exact or closest per-side loads, Settings stores a bar weight and plate inventory, and components/plates.tsx renders the hint. Mounting the hint on the Today set rows and the quick entry rows is the remaining step, specified in BACKLOG.md.
 - [x] Today save recovery (2026-09-08, commit ea3858d): a lost save response no longer deadlocks the session on a stale revision.
 - [x] Continuous integration (2026-09-08): .github/workflows/ci.yml runs the verification chain and the browser suite on GitHub-hosted runners; CI.md documents the jobs, the serialised harness port and how to reproduce a failure.
+- [x] History screen and Progress rebuild (2026-09-08): a new /history route shows a month calendar of training days and the full contents of any selected day, and Progress replaces its bare counters with weekly volume bars, recent personal bests, four-week muscle balance and per-movement trends with an estimated one-rep max. Eleven pure helpers in lib/progress.ts back both screens and are covered by tests/progress.test.ts and tests/browser/history.spec.ts.
 
 ### Phase 2 — acquisition without a community
 - [x] Routine sharing: every routine has a share link (/routines?import=code) that opens the editor prefilled in any account; standard exercises map by id, custom ones by name, and unmatched names are reported (lib/share.ts).
