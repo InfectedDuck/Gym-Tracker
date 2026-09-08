@@ -1,0 +1,1 @@
+alter table public.profiles add column if not exists bar_weight_kg numeric check(bar_weight_kg is null or bar_weight_kg between 0 and 50);alter table public.profiles add column if not exists plates_kg text check(plates_kg is null or char_length(plates_kg)<=200);
