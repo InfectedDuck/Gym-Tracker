@@ -1,1 +1,1 @@
-import{Today}from"@/components/today";export default function Page(){return<Today/>}
+import{SimpleLog}from"@/components/simple-log";export default function Page(){return<SimpleLog/>}

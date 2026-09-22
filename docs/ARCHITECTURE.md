@@ -1,7 +1,7 @@
 # Forge architecture
 
 ## Product and design
-Forge is a private strength-training tracker. Next.js App Router, React, TypeScript, Tailwind CSS, Supabase Auth, and PostgreSQL implement the approved plan. The interface follows the Blackplate design system described in DESIGN_BRIEF.md: near-black neutral surfaces, bone-white ink, and a single ember accent reserved for the primary action and the completed state, with a white-hot mark for all-time bests. Barlow Condensed carries every number, Inter carries the interface, and both are self-hosted through next/font. Every colour is a semantic custom property on :root in app/globals.css, so the Daylight variant under prefers-color-scheme:light is a token override rather than a second stylesheet. Desktop is a 64px icon rail with no top bar and a single content column; phones keep a four-tab bottom bar with a top bar for the settings entry point. Text contrast is at least 4.5:1, interactive boundaries at least 3:1, controls at least 44px, focus is always visible, and reduced motion is respected.
+Forge is a private strength-training tracker. Next.js App Router, React, TypeScript, Tailwind CSS, Supabase Auth, and PostgreSQL implement the approved plan. The interface follows the Blackplate design system described in DESIGN_BRIEF.md: near-black neutral surfaces, bone-white ink, and a single ember accent reserved for the primary action and the completed state, with a white-hot mark for all-time bests. Barlow Condensed carries every number, Inter carries the interface, and both are self-hosted through next/font. Every colour is a semantic custom property on :root in app/globals.css, so the Daylight variant under prefers-color-scheme:light is a token override rather than a second stylesheet. Desktop is a 64px icon rail with no top bar and a single content column; phones keep a five-tab bottom bar with a top bar for the settings entry point. Text contrast is at least 4.5:1, interactive boundaries at least 3:1, controls at least 44px, focus is always visible, and reduced motion is respected.
 
 ## System boundaries
 Server components load authenticated initial data. Client components own unsaved form state and call same-origin Next.js route handlers. Services validate every request and use the caller's Supabase session. PostgreSQL row-level security independently enforces ownership. The application never uses a service-role key for user requests.
@@ -9,7 +9,7 @@ Supabase email/password supports confirmation, recovery, and cookie sessions. Mi
 
 ## Database
 - profiles: authentication user ID, display name, kg/lb preference, IANA timezone, rest timer and entry mode preferences, optional bar weight in kg and a plate inventory text (null means the display unit's defaults), timestamps.
-- exercises: nullable owner (null means standard), name, description, muscle group, equipment, weighted/bodyweight/assisted tracking type, archive timestamp. 150 standard exercises are seeded with deterministic IDs.
+- exercises: nullable owner (null means standard), name, description, muscle group, equipment, weighted/bodyweight/assisted tracking type, archive timestamp. 162 standard exercises are seeded with deterministic IDs.
 - workout_sessions: user, local workout date, start/completion timestamps, title, notes, revision, last mutation ID.
 - workout_exercises: session, exercise, position, notes, rest seconds.
 - exercise_sets: workout exercise, set number, working/warmup type, decimal kg weight, input unit, reps, completion timestamp.
@@ -22,7 +22,7 @@ Whole-workout and whole-template saves use transactional PostgreSQL functions. B
 
 ## Interfaces
 - GET /api/bootstrap?date=YYYY-MM-DD: profile, active catalog, selected day's sessions, completed history from 84 days back to the Sunday of the current week, and templates.
-- GET /api/history/:exerciseId?weeks=4|12|all&page=1: date-range session aggregates and 10 sessions of set details; includes previous-session information. points=1 returns the aggregates only, which is what Today uses for all-time bests.
+- GET /api/history/:exerciseId?weeks=1|4|12|26|52|all&page=1: date-range session aggregates and 10 sessions of set details; includes previous-session information. points=1 returns the aggregates only, which is what Today uses for all-time bests.
 - PUT /api/profile: profile preferences; the body is partial and only the supplied columns are written.
 - POST /api/exercises; PUT /api/exercises/:id; DELETE /api/exercises/:id: private custom catalog management.
 - PUT /api/workouts/:id: transactional versioned session save; DELETE removes an owned session.
@@ -43,7 +43,7 @@ lib/search.ts owns catalog search for the library and the exercise picker; compo
 - Matching: the query is folded and split into tokens; every token must match (AND). A token matches when it is a prefix of any haystack word. Short queries therefore never match mid-word: "row" matches "row" and "rows" but not "arrow".
 - De-spaced fallback: a token of five or more characters also matches when the haystack with its spaces removed contains it, so "pushup" finds "Push-up" and "skullcrusher" finds "Skull crusher". The five-character floor keeps three- and four-letter queries from matching noise across word boundaries.
 - Typo tolerance (commit 6c74d8b): a token of five or more characters may also match a haystack word whose prefix differs from the token by exactly one substitution or one adjacent transposition (near()). Distance two is never accepted, and tokens shorter than five characters are never widened. The widening is decided per token against the whole pool: it applies only when the token matches nothing strictly anywhere in the pool, so a correctly typed "cable" never surfaces the "table row" alias, and a pre-filtered pool keeps its order.
-- Standard exercises: 150 are seeded with deterministic IDs, 83 in 202609070002_exercises.sql and 67 more in 202609080006_catalog.sql, which also replaces the original boilerplate descriptions with per-exercise coaching text. tests/search.test.ts parses both migrations and proves every exercise is reachable by its own name.
+- Standard exercises: 162 are seeded with deterministic IDs, 83 in 202609070002_exercises.sql, 67 more in 202609080006_catalog.sql (which also replaces the original boilerplate descriptions with per-exercise coaching text), and 12 more in 202609080010_exercises_extra.sql. tests/search.test.ts parses all three catalog migrations and proves every exercise is reachable by its own name.
 
 ## Plate loading
 lib/plates.ts (commit 9d7c930) is pure plate-loading logic with unit tests in tests/plates.test.ts. Settings stores the profile's bar weight and plate inventory (202609080007_plates.sql), and components/plates.tsx exports plateHintText and a PlateHint component built on loadPlates (tests/plates-ui.test.ts). The hint is not yet mounted on the Today set rows or the quick entry rows; that step is specified in BACKLOG.md.

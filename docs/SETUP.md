@@ -6,7 +6,7 @@
 3. Copy .env.example to .env.local.
 4. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY from the project's API settings. The publishable key is intended for clients; never substitute a service-role key.
 5. Set NEXT_PUBLIC_APP_URL to the local origin you will consistently use, such as http://127.0.0.1:3000.
-6. Apply every file in supabase/migrations in filename order in the Supabase SQL editor: 202609070001_schema.sql, 202609070002_exercises.sql, 202609070003_rest_timer.sql, 202609070004_entry_mode.sql, 202609080005_rep_ranges.sql, 202609080006_catalog.sql, 202609080007_plates.sql, 202609080008_guards.sql. Each is a complete migration; apply each once. See Pending migrations below for the ones that no hosted project has yet.
+6. Apply every file in supabase/migrations in filename order in the Supabase SQL editor: 202609070001_schema.sql, 202609070002_exercises.sql, 202609070003_rest_timer.sql, 202609070004_entry_mode.sql, 202609080005_rep_ranges.sql, 202609080006_catalog.sql, 202609080007_plates.sql, 202609080008_guards.sql, 202609080009_scheduled_days.sql, 202609080010_exercises_extra.sql, 202609080011_drop_volume.sql. Each is a complete migration; apply each once. See Pending migrations below for the ones that no hosted project has yet.
 7. Start npm run dev and open http://127.0.0.1:3000.
 
 The application shows a setup screen while the public Supabase configuration is absent. Workout persistence is exclusively PostgreSQL. Only the rest timer's deadline is kept in localStorage.
@@ -47,12 +47,13 @@ Browser tests default to installed Chrome. Use PLAYWRIGHT_CHANNEL=msedge to choo
 For live checks, configure E2E_BASE_URL, E2E_EMAIL, E2E_PASSWORD, E2E_SECOND_EMAIL, E2E_SECOND_PASSWORD, NEXT_PUBLIC_SUPABASE_URL, and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY in the process environment. Use two verified, dedicated test accounts. Never use production accounts. Live tests create and remove their own workout records and archive their custom exercise afterward.
 
 ## Pending migrations
-No hosted Supabase project has been migrated past 202609070004_entry_mode.sql. The test harness and the database suite replay every file in the folder (sorted readdir since commit f3c7342), so every check passes locally while a hosted project still runs the old schema. Four migrations are pending as of 2026-09-08; apply them in this order, each once, as a single statement batch in the Supabase SQL editor:
+No hosted Supabase project has been migrated past 202609070004_entry_mode.sql. The test harness and the database suite replay every file in the folder (sorted readdir since commit f3c7342), so every check passes locally while a hosted project still runs the old schema. Four migrations are pending as of 2026-09-08, plus the weekday-schedule and extra-exercises migrations below; apply them in this order, each once, as a single statement batch in the Supabase SQL editor:
 
 1. 202609080005_rep_ranges.sql adds template_exercises.target_reps_max with a check that the ceiling is at least the target, and replaces save_template with a version that stores the ceiling. It must go first because the catalog file assumes the current function set and because every rep-range feature depends on the column.
 2. 202609080006_catalog.sql inserts the 67 standard exercises with IDs 084 to 150 (on conflict do nothing, so it is safe to re-run) and rewrites the descriptions of the original 83 by name. It has no dependency on the first file but should follow it so the two hosted projects stay in filename order.
 3. 202609080007_plates.sql adds profiles.bar_weight_kg (null or 0 to 50) and profiles.plates_kg (text up to 200 characters); null means the display unit's default bar and plate set. Add-column-if-not-exists, so it is safe to re-run.
 4. 202609080008_guards.sql redefines save_workout and save_template on top of 0005: both reject a payload whose exercise array is absent or not an array instead of silently treating it as empty, and a routine that already references an archived custom exercise stays saveable. It must follow 0005 because it restates save_template with the rep ceiling.
+5. 202609080009_scheduled_days.sql adds workout_templates.scheduled_days (integer array of weekdays, 0=Monday through 6=Sunday, default empty) with a check that every day is in range, and replaces save_template with a version that stores the days. Routines saved without days keep working; the weekday schedule in the app only persists once this is applied.
 
 Until 202609080005_rep_ranges.sql is applied:
 - Routines load without a target_reps_max field, so every rep range and named scheme renders as a single number and the guided target never shows a ceiling. The client types the field as required, so any code path that reads it gets undefined rather than null.
@@ -71,7 +72,14 @@ Until 202609080008_guards.sql is applied:
 - A direct RPC call with the exercise array omitted deletes every child row of the targeted workout or routine, because jsonb_array_length of NULL never trips the size guard. The application never sends such a payload, but the publishable key makes the RPC reachable from a browser.
 - A routine that references an archived custom exercise cannot be re-saved.
 
-After applying all four, run npm run test:live against the project to confirm routines with ranges save and load. Any later migration joins this list until it is applied to both hosted projects. CI.md explains why continuous integration cannot catch this gap: the workflow runs against an embedded database that replays every migration file, never against a hosted project.
+Until 202609080009_scheduled_days.sql is applied:
+- Saving training days on a routine fails or is ignored, so weekday assignments do not persist and every routine shows as unscheduled after reload. The rest of the routine still saves.
+
+6. 202609080010_exercises_extra.sql inserts 12 more standard exercises with IDs 151 to 162 (cable pull-through, pause squat, deficit deadlift, JM press, walking lunge, step-up, box squat, toes to bar, spider curl, rope pushdown, single-arm dumbbell row, chest-supported row) on conflict do nothing, so it is safe to re-run.
+
+7. 202609080011_drop_volume.sql drops volume from history_points and restates the function without the column. Apply it last so charts and history read weight and reps only.
+
+After applying all seven, run npm run test:live against the project to confirm routines with ranges save and load. Any later migration joins this list until it is applied to both hosted projects. CI.md explains why continuous integration cannot catch this gap: the workflow runs against an embedded database that replays every migration file, never against a hosted project.
 
 ## Deployment
 Use a separate production Supabase project. Apply the same migrations in order, configure its email sender, and set the production origin and callback URLs.
