@@ -51,5 +51,3 @@ Enable email/password authentication and email confirmation. Set Site URL to you
 ## Verification
 
 npm test runs calculations, validation, and PostgreSQL policy/transaction tests with an embedded PostgreSQL engine. npm run typecheck and npm run build validate production source. npm run test:e2e runs the real UI against an isolated PostgreSQL test harness. npm run test:live verifies real authentication and application APIs with a configured Supabase test project and two dedicated test accounts. See docs/SETUP.md. GitHub Actions runs the same chain on every push and pull request (docs/CI.md).
-
-Generated application source is intentionally compact and comment-free per the project's coding constraint.
