@@ -1,6 +1,6 @@
 # Design brief for the Forge redesign
 
-> Status: the "Blackplate" direction in section 3 was implemented in the application on 2026-09-08. The palette, type, layout, and component decisions below are the source of truth for app/globals.css. The alternate directions at the end remain unbuilt.
+> Status: the "Blackplate" direction in section 3 was implemented in the application on 2026-09-08. On 2026-10-20 the interface was rebuilt as "Forged Ledger" (Ledger's skeleton, Blackplate's skin); docs/DESIGN_HYBRID_PLAN.md is now the source of truth for app/globals.css, and the palette, type, layout, and component decisions below are kept only as history. The alternate directions at the end remain unbuilt.
 
 Everything below the line is the brief. Section 3 is the recommended direction. Two alternate directions are at the end of this file; to use one, replace section 3 with it and leave everything else unchanged.
 
