@@ -1,6 +1,6 @@
 # Forge
 
-Private strength training with Next.js, React, Tailwind CSS, and Supabase PostgreSQL. Log workouts set by set or in one tap, track personal bests, and watch volume, streaks, and muscle balance trend over time.
+Private strength training with Next.js, React, Tailwind CSS, and Supabase PostgreSQL. Log workouts set by set or in one tap, track personal bests, and watch volume, streaks, and muscle balance trend over time. The interface follows the Forged Ledger design system — the Ledger structure with the Blackplate dark-first identity (see docs/DESIGN_HYBRID_PLAN.md).
 
 ## Screenshots
 
@@ -19,6 +19,12 @@ Screenshots show seeded demo data served by the isolated UI test harness (`npm r
 | Routines — reusable templates on a weekly schedule | Settings — profile, units, rest timer, and plates |
 | --- | --- |
 | ![Routine templates assigned to weekdays](docs/screenshots/routines.png) | ![Settings for profile and training preferences](docs/screenshots/settings.png) |
+
+| Light theme — the same log in the Daylight variant | Phone — ledger tables with the sticky action bar |
+| --- | --- |
+| ![Workout log in the light theme](docs/screenshots/after-hybrid/log-1440-light.png) | ![Workout log on a 390px phone](docs/screenshots/after-hybrid/log-390-dark.png) |
+
+Before/after captures for every route (390px and 1440px, dark and light) live in docs/screenshots/before-hybrid/ and docs/screenshots/after-hybrid/.
 
 ## Features
 
@@ -43,6 +49,8 @@ Enable email/password authentication and email confirmation. Set Site URL to you
 ## Project references
 
 - [Architecture](docs/ARCHITECTURE.md)
+- [Design system (Forged Ledger, current)](docs/DESIGN_HYBRID_PLAN.md)
+- [Design brief (history)](docs/DESIGN_BRIEF.md)
 - [Development plan](docs/DEVELOPMENT_PLAN.md)
 - [Setup and release](docs/SETUP.md)
 - [Continuous integration](docs/CI.md)
